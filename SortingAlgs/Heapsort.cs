@@ -6,9 +6,7 @@ namespace SortingAlgs
 {
     class Heapsort
     {
-        private int comparisonCount = 2; // represents how many comparisions were made to sort array
-
-        public Heapsort() { }
+        private int comparisonCount = 0; // represents how many comparisions were made to sort array
 
         // Sorts array using heapsort
         public int SortArray(int[] unsortedInts)

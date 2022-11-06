@@ -1,6 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
 
+// Mergesort: O(n log n) for best, worst and average cases
+// Quicksort: 
+
 namespace SortingAlgs
 {
     class Program
