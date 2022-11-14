@@ -1,8 +1,24 @@
 ﻿using System;
 using System.Collections.Generic;
 
-// Mergesort: O(n log n) for best, worst and average cases
-// Quicksort: 
+/* Mergesort: 
+ * O(n log n) for best, worst and average cases
+ * Counts comparisons made when merging the arrays
+ */
+
+/* Quicksort: 
+ * O(n log n) for best and avaerage cases. O(n^2) for worst case
+ * Counts comparisons when comparing left and right values to the pivot value
+ * Causes a stack overflow error for increasing and decreasing arrays
+ * Because they are already ordered there is a partition made for every value in the array
+ * Increasing has an exact comparison count of n(n-1)/2
+ * Decreasing has an exact comparison count of n(n-2)/2
+ * Both of these line up with the worst case running time of O(n^2)
+ */
+
+/* Heapsort:
+ * O(n log n) for best, worst and average cases
+ */
 
 namespace SortingAlgs
 {
@@ -89,15 +105,34 @@ namespace SortingAlgs
                         else if(i < 8)
                         {
                             randomComparisons[i] = quickSort.SortArray(arrayList[randomIndex]);
-                            increasingComparisons[i] = quickSort.SortArray(arrayList[increasingIndex]);
-                            decreasingComparisons[i] = quickSort.SortArray(arrayList[decreasingIndex]);
+
+                            if(arrayList[increasingIndex].Length > 10000)
+                            {
+                                increasingComparisons[i] = -1;
+                            }
+                            else
+                            {
+                                increasingComparisons[i] = quickSort.SortArray(arrayList[increasingIndex]);
+                            }
+
+                            if (arrayList[decreasingIndex].Length > 10000)
+                            {
+                                decreasingComparisons[i] = -1;
+                            }
+                            else
+                            {
+                                decreasingComparisons[i] = quickSort.SortArray(arrayList[decreasingIndex]);
+                            }
                         }
                         // 8-11 is heapsort
                         else
                         {
                             randomComparisons[i] = heapSort.SortArray(arrayList[randomIndex]);
+                            Console.WriteLine("random " + arrayList[randomIndex].Length + " comeplete");
                             increasingComparisons[i] = heapSort.SortArray(arrayList[increasingIndex]);
+                            Console.WriteLine("increasing " + arrayList[increasingIndex].Length + " comeplete");
                             decreasingComparisons[i] = heapSort.SortArray(arrayList[decreasingIndex]);
+                            Console.WriteLine("decreasing " + arrayList[decreasingIndex].Length + " comeplete");
                         }
                     }
 
@@ -128,8 +163,23 @@ namespace SortingAlgs
                         }
 
                         randomData += randomComparisons[i].ToString() + "\t";
-                        increasingData += increasingComparisons[i].ToString() + "\t";
-                        decreasingData += decreasingComparisons[i].ToString() + "\t";
+                        if (increasingComparisons[i] == -1)
+                        {
+                            increasingData += "Overflow\t";
+                        }
+                        else
+                        {
+                            increasingData += increasingComparisons[i].ToString() + "\t";
+                        }
+                        
+                        if(decreasingComparisons[i] == -1)
+                        {
+                            decreasingData += "Overflow\t";
+                        }
+                        else
+                        {
+                            decreasingData += decreasingComparisons[i].ToString() + "\t";
+                        }
                     }
 
                     // displaying comparisons from random array sorts

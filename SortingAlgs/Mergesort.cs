@@ -6,16 +6,17 @@ namespace SortingAlgs
 {
     class Mergesort
     {
-        // counts comparisions made in the merge method
-        private int comparisonCount; 
+        // counts comparisions 
+        private int comparisonCount;
 
-        // Sorts array using mergesort
+        // Calls Sort() and returns comparison count
         public int SortArray(int[] unsorted)
         {
             comparisonCount = 0;
             Sort(unsorted);
             return comparisonCount;
         }
+        // Sorts array using mergesort
         private int[] Sort(int[] unsorted)
         {
             if (unsorted.Length == 1)
