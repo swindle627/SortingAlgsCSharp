@@ -9,15 +9,15 @@ using System.Collections.Generic;
 /* Quicksort: 
  * O(n log n) for best and avaerage cases. O(n^2) for worst case
  * Counts comparisons when comparing left and right values to the pivot value
- * Causes a stack overflow error for increasing and decreasing arrays
+ * Causes a stack overflow error for large increasing and decreasing arrays
  * Because they are already ordered there is a partition made for every value in the array
- * Increasing has an exact comparison count of n(n-1)/2
- * Decreasing has an exact comparison count of n(n-2)/2
- * Both of these line up with the worst case running time of O(n^2)
+ * All increasing and decreasing arrays have an exact comaprison count of n(n-1)/2
+ * This lines up with the worst case running time of O(n^2)
  */
 
 /* Heapsort:
  * O(n log n) for best, worst and average cases
+ * Counts comparisons made when reheaping
  */
 
 namespace SortingAlgs
@@ -33,12 +33,11 @@ namespace SortingAlgs
             Quicksort quickSort = new Quicksort();
             Heapsort heapSort = new Heapsort();
 
-            List<int[]> arrayList = new List<int[]>()
-            {
-                new int[1000], new int[10000], new int[100000], new int [1000000], // arrays of random generated ints (indexes: 0-3)
-                new int[1000], new int[10000], new int[100000], new int [1000000], // arrays of increasing ints (indexes: 4-7)
-                new int[1000], new int[10000], new int[100000], new int [1000000], // arrays of decreasing ints (indexes: 8-11)
-            };
+            int oneK = 1000, tenK = 10000, hundredK = 100000, oneMil = 1000000;
+
+            int[] rnd1k = new int[oneK], rnd10k = new int[tenK], rnd100k = new int[hundredK], rnd1mil = new int[oneMil]; // arrays of random generated ints 
+            int[] inc1k = new int[oneK], inc10k = new int[tenK], inc100k = new int[hundredK], inc1mil = new int[oneMil]; // arrays of increasing ints 
+            int[] dec1k = new int[oneK], dec10k = new int[tenK], dec100k = new int[hundredK], dec1mil = new int[oneMil]; // arrays of decreasing ints
 
             // arrays that store comparison counts for each sort
             // indexes: mergesort = (0-3), quicksort = (4-7), heapsort = (8-11)
@@ -62,24 +61,20 @@ namespace SortingAlgs
                     Console.Clear();
 
                     // populating arrays
-                    for (int i = 0; i < 12; i++)
-                    {
-                        // populating random arrays
-                        if(i < 4)
-                        {
-                            arrayList[i] = RandomIntegers(arrayList[i].Length);
-                        }
-                        // populating increasing arrays
-                        else if(i < 8)
-                        {
-                            arrayList[i] = IncreasingIntegers(arrayList[i].Length);
-                        }
-                        // populating decreasing arrays
-                        else
-                        {
-                            arrayList[i] = DecreasingIntegers(arrayList[i].Length);
-                        }
-                    }
+                    rnd1k = RandomIntegers(oneK);
+                    rnd10k = RandomIntegers(tenK);
+                    rnd100k = RandomIntegers(hundredK);
+                    rnd1mil = RandomIntegers(oneMil);
+
+                    inc1k = IncreasingIntegers(oneK);
+                    inc10k = IncreasingIntegers(tenK);
+                    inc100k = IncreasingIntegers(hundredK);
+                    inc1mil = IncreasingIntegers(oneMil);
+
+                    dec1k = DecreasingIntegers(oneK);
+                    dec10k = DecreasingIntegers(tenK);
+                    dec100k = DecreasingIntegers(hundredK);
+                    dec1mil = DecreasingIntegers(oneMil);
 
                     Console.WriteLine("Arrays populated");
                 }
@@ -87,54 +82,83 @@ namespace SortingAlgs
                 {
                     Console.Clear();
 
-                    // running sorting algorithms
-                    for(int i = 0; i < 12; i++)
-                    {
-                        int randomIndex = i % 4; // increments through indexes 0-3 in arrayList which are the random arrays
-                        int increasingIndex = randomIndex + 4; // increments through indexes 4-7 in arrayList which are the increasing arrays
-                        int decreasingIndex = increasingIndex + 4; //increments through indexes 8-11 in arrayList which are the decreasing arrays
+                    // Random array sorts
+                    randomComparisons[0] = mergeSort.SortArray(rnd1k);
+                    Console.WriteLine("mergesort rnd1k done");
+                    randomComparisons[1] = mergeSort.SortArray(rnd10k);
+                    Console.WriteLine("mergesort rnd10k done");
+                    randomComparisons[2] = mergeSort.SortArray(rnd100k);
+                    Console.WriteLine("mergesort rnd100k done");
+                    randomComparisons[3] = mergeSort.SortArray(rnd1mil);
+                    Console.WriteLine("mergesort rnd1mil done");
+                    randomComparisons[4] = quickSort.SortArray(rnd1k);
+                    Console.WriteLine("quicksort rnd1k done");
+                    randomComparisons[5] = quickSort.SortArray(rnd10k);
+                    Console.WriteLine("quicksort rnd10k done");
+                    randomComparisons[6] = quickSort.SortArray(rnd100k);
+                    Console.WriteLine("quicksort rnd100k done");
+                    randomComparisons[7] = quickSort.SortArray(rnd1mil);
+                    Console.WriteLine("quicksort rnd1mil done");
+                    randomComparisons[8] = heapSort.SortArray(rnd1k);
+                    Console.WriteLine("heapsort rnd1k done");
+                    randomComparisons[9] = heapSort.SortArray(rnd10k);
+                    Console.WriteLine("heapsort rnd10k done");
+                    randomComparisons[10] = heapSort.SortArray(rnd100k);
+                    Console.WriteLine("heapsort rnd100k done");
+                    randomComparisons[11] = heapSort.SortArray(rnd1mil);
+                    Console.WriteLine("heapsort rnd1mil done");
 
-                        // 0-3 is mergesort
-                        if (i < 4)
-                        {
-                            randomComparisons[i] = mergeSort.SortArray(arrayList[randomIndex]);
-                            increasingComparisons[i] = mergeSort.SortArray(arrayList[increasingIndex]);
-                            decreasingComparisons[i] = mergeSort.SortArray(arrayList[decreasingIndex]);
-                        }
-                        // 4-7 is quicksort
-                        else if(i < 8)
-                        {
-                            randomComparisons[i] = quickSort.SortArray(arrayList[randomIndex]);
+                    // Increasing array sorts
+                    increasingComparisons[0] = mergeSort.SortArray(inc1k);
+                    Console.WriteLine("mergesort inc1k done");
+                    increasingComparisons[1] = mergeSort.SortArray(inc10k);
+                    Console.WriteLine("mergesort inc10k done");
+                    increasingComparisons[2] = mergeSort.SortArray(inc100k);
+                    Console.WriteLine("mergesort inc100k done");
+                    increasingComparisons[3] = mergeSort.SortArray(inc1mil);
+                    Console.WriteLine("mergesort inc1mil done");
+                    increasingComparisons[4] = quickSort.SortArray(inc1k);
+                    Console.WriteLine("quicksort inc1k done");
+                    increasingComparisons[5] = quickSort.SortArray(inc10k);
+                    Console.WriteLine("quicksort inc10k done");
+                    increasingComparisons[6] = -1;
+                    Console.WriteLine("quicksort inc100k done");
+                    increasingComparisons[7] = -1;
+                    Console.WriteLine("quicksort inc1mil done");
+                    increasingComparisons[8] = heapSort.SortArray(inc1k);
+                    Console.WriteLine("heapsort inc1k done");
+                    increasingComparisons[9] = heapSort.SortArray(inc10k);
+                    Console.WriteLine("heapsort inc10k done");
+                    increasingComparisons[10] = heapSort.SortArray(inc100k);
+                    Console.WriteLine("heapsort inc100k done");
+                    increasingComparisons[11] = heapSort.SortArray(inc1mil);
+                    Console.WriteLine("heapsort inc1mil done");
 
-                            if(arrayList[increasingIndex].Length > 10000)
-                            {
-                                increasingComparisons[i] = -1;
-                            }
-                            else
-                            {
-                                increasingComparisons[i] = quickSort.SortArray(arrayList[increasingIndex]);
-                            }
-
-                            if (arrayList[decreasingIndex].Length > 10000)
-                            {
-                                decreasingComparisons[i] = -1;
-                            }
-                            else
-                            {
-                                decreasingComparisons[i] = quickSort.SortArray(arrayList[decreasingIndex]);
-                            }
-                        }
-                        // 8-11 is heapsort
-                        else
-                        {
-                            randomComparisons[i] = heapSort.SortArray(arrayList[randomIndex]);
-                            Console.WriteLine("random " + arrayList[randomIndex].Length + " comeplete");
-                            increasingComparisons[i] = heapSort.SortArray(arrayList[increasingIndex]);
-                            Console.WriteLine("increasing " + arrayList[increasingIndex].Length + " comeplete");
-                            decreasingComparisons[i] = heapSort.SortArray(arrayList[decreasingIndex]);
-                            Console.WriteLine("decreasing " + arrayList[decreasingIndex].Length + " comeplete");
-                        }
-                    }
+                    // Decreasing array sorts
+                    decreasingComparisons[0] = mergeSort.SortArray(dec1k);
+                    Console.WriteLine("mergesort dec1k done");
+                    decreasingComparisons[1] = mergeSort.SortArray(dec10k);
+                    Console.WriteLine("mergesort dec10k done");
+                    decreasingComparisons[2] = mergeSort.SortArray(dec100k);
+                    Console.WriteLine("mergesort dec100k done");
+                    decreasingComparisons[3] = mergeSort.SortArray(dec1mil);
+                    Console.WriteLine("mergesort dec1mil done");
+                    decreasingComparisons[4] = quickSort.SortArray(dec1k);
+                    Console.WriteLine("quicksort dec1k done");
+                    decreasingComparisons[5] = quickSort.SortArray(dec10k);
+                    Console.WriteLine("quicksort dec10k done");
+                    decreasingComparisons[6] = -1;
+                    Console.WriteLine("quicksort dec100k done");
+                    decreasingComparisons[7] = -1;
+                    Console.WriteLine("quicksort dec1mil done");
+                    decreasingComparisons[8] = heapSort.SortArray(dec1k);
+                    Console.WriteLine("heapsort dec1k done");
+                    decreasingComparisons[9] = heapSort.SortArray(dec10k);
+                    Console.WriteLine("heapsort dec10k done");
+                    decreasingComparisons[10] = heapSort.SortArray(dec100k);
+                    Console.WriteLine("heapsort dec100k done");
+                    decreasingComparisons[11] = heapSort.SortArray(dec1mil);
+                    Console.WriteLine("heapsort dec1mil done");
 
                     Console.WriteLine("Alogrithms Complete");
                 }
@@ -162,7 +186,15 @@ namespace SortingAlgs
                             decreasingData += "\nHeapsort\t";
                         }
 
-                        randomData += randomComparisons[i].ToString() + "\t";
+                        if(randomComparisons[i] == -1)
+                        {
+                            randomData += "Overflow\t";
+                        }
+                        else
+                        {
+                            randomData += randomComparisons[i].ToString() + "\t";
+                        }
+
                         if (increasingComparisons[i] == -1)
                         {
                             increasingData += "Overflow\t";
@@ -221,7 +253,7 @@ namespace SortingAlgs
 
             for(int i = 0; i < n; i++)
             {
-                randomInts[i] = rnd.Next();
+                randomInts[i] = rnd.Next(n + 1);
             }
 
             return randomInts;

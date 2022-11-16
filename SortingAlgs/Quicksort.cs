@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Text;
+using System.Diagnostics;
 
 namespace SortingAlgs
 {
@@ -13,59 +14,73 @@ namespace SortingAlgs
         public int SortArray(int[] unsorted)
         {
             comparisonCount = 0;
-            Sort(unsorted, 0, unsorted.Length-1);
+            Sort(unsorted);
             return comparisonCount;
         }
         // Sorts array using quicksort
-        private int[] Sort(int[] unsorted, int low, int high)
+        private int[] Sort(int[] unsorted)
         {
-            int left = low; // leftmost index
-            int right = high; // rightmost index
-            int pivot = unsorted[high]; // pivot set to the rightmost index
+            int low = 0; // first index of the array
+            int high = unsorted.Length - 1; // last index of the array
+            Stack<int> indexes = new Stack<int>(); // stack containing low and high indexes
 
-            // sorts array so that a values less than the pivot will be on its left...
-            // ...and all values greater than the pivot will be on its right
-            while (left <= right)
+            indexes.Push(low);
+            indexes.Push(high);
+
+
+            while (indexes.Count > 0)
             {
-                // left index skips values less than the pivot
-                while (unsorted[left] < pivot)
+                high = indexes.Pop();
+                low = indexes.Pop();
+
+                int pIndex = Partition(ref unsorted, low, high); // gets the partition index
+
+                // adds the low and high indexes for the left partition to the stack
+                if (pIndex - 1 > low)
                 {
-                    left++;
-                    comparisonCount++;
+                    indexes.Push(low);
+                    indexes.Push(pIndex - 1);
                 }
 
-                // right index skips values greater than the pivot
-                while (unsorted[right] > pivot)
+                // adds the low and high indexes for the right partition to the stack
+                if (pIndex + 1 < high)
                 {
-                    right--;
-                    comparisonCount++;
+                    indexes.Push(pIndex + 1);
+                    indexes.Push(high);
                 }
-
-                // swaps left and right values if left index is not greater than right index
-                if (left <= right)
-                {
-                    int temp = unsorted[left];
-                    unsorted[left] = unsorted[right];
-                    unsorted[right] = temp;
-                    left++;
-                    right--;
-                }
-            }
-
-            // sorts left partition
-            if (low < right)
-            {
-                Sort(unsorted, low, right);
-            }
-
-            // sorts right partition
-            if (left < high)
-            {
-                Sort(unsorted, left, high);
             }
 
             return unsorted;
         }
+        private int Partition(ref int[] unsorted, int low, int high)
+        {
+            int pivot = unsorted[high]; // sets pivot value to farthest right value
+            int pIndex = low - 1; // partition index
+            int temp; // used for swapping
 
+            // puts values lower than or equal to the pivot value to the left of it and values higher than the pivot value to the right of it
+            // loop stops before it reaches the pivot value's index
+            for (int i = low; i < high; i++)
+            {
+                if (unsorted[i] <= pivot)
+                {
+                    pIndex++;
+                    temp = unsorted[i];
+                    unsorted[i] = unsorted[pIndex];
+                    unsorted[pIndex] = temp;
+                }
+                comparisonCount++;
+            }
+
+            // this will set pIndex to the index the pivot value is supposed to be at
+            pIndex++;
+
+            // puts the pivot value into its correct place
+            temp = unsorted[high];
+            unsorted[high] = unsorted[pIndex];
+            unsorted[pIndex] = temp;
+
+            return pIndex;
+        }
     }
 }
