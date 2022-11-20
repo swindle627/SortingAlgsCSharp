@@ -160,7 +160,7 @@ namespace SortingAlgs
                     decreasingComparisons[11] = heapSort.SortArray(dec1mil);
                     Console.WriteLine("heapsort dec1mil done");
 
-                    Console.WriteLine("Alogrithms Complete");
+                    Console.WriteLine("Algorithms Complete");
                 }
                 else if (option == 3)
                 {
